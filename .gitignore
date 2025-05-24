@@ -1,0 +1,77 @@
+# === Node Modules ===
+FE-chatbox/node_modules/
+backend/node_modules/
+
+# === Build Output ===
+FE-chatbox/dist/
+backend/build/
+
+# === Vite Cache ===
+FE-chatbox/.vite/
+FE-chatbox/.vitepress/
+
+# === Log Files ===
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# === Environment Variables ===
+backend/.env
+FE-chatbox/.env
+FE-chatbox/.env.local
+FE-chatbox/.env.development.local
+FE-chatbox/.env.test.local
+FE-chatbox/.env.production.local
+FE-chatbox/.env
+
+# === System Files ===
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# === IDE / Editor Directories ===
+.vscode/
+.idea/
+.history/
+
+# === TypeScript ===
+*.tsbuildinfo
+
+# === Test Coverage ===
+coverage/
+
+# === Optional Lock Files ===
+# Uncomment the ones you don’t use
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# === Misc ===
+*.tgz
+
+# === Storybook (if using) ===
+FE-chatbox/.out/
+FE-chatbox/storybook-static/
+
+# === Cypress (if using) ===
+FE-chatbox/cypress/screenshots/
+FE-chatbox/cypress/videos/
+
+# === OS Specific ===
+.AppleDouble
+.LSOverride
+ehthumbs.db
+Desktop.ini
+.Trash-*
+
+# === JetBrains IDEs ===
+*.iml
+.idea/
+
+
+
+FE-chatbox/package-lock.json
+backend/package-lock.json
