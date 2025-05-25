@@ -1,7 +1,6 @@
 import { LogOut, MessageCircle } from "lucide-react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { HashAtom } from "../stores/atoms/hashAtom";
-import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+
 import { useEffect, useRef, useState } from "react";
 import { getSocket } from "../utils/socket";
 import { SocketAtom } from "../stores/atoms/socketAtom";
@@ -14,10 +13,8 @@ interface Data {
 }
 
 export function JoinedChat() {
-  const hash = useRecoilValue(HashAtom);
   const [message, setMessage] = useState<Data[]>([]);
   const [socket, setSocket] = useRecoilState(SocketAtom);
-  const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [name,setName]=useState("")

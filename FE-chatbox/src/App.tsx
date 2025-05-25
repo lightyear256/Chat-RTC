@@ -4,10 +4,6 @@ import { JoinedChat } from "./components/JoinedChat"
 import { SignUp } from './Pages/SignUp';
 import { Signin } from './Pages/Signin';
 import { Home } from './Pages/Home';
-import { useEffect } from 'react';
-import { getSocket } from './utils/socket';
-import { useSetRecoilState } from 'recoil';
-import { SocketAtom } from './stores/atoms/socketAtom';
 import { AppInitializer } from './Pages/Appinitializer';
 
 function App() {

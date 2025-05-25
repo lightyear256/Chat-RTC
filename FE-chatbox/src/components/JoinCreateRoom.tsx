@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { haser } from "../utils/hasher";
 import { useRecoilState } from "recoil";
 import { HashAtom } from "../stores/atoms/hashAtom";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export function JoinCreateRoom() {

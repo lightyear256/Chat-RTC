@@ -1,7 +1,7 @@
-import { MessageCircle, Divide } from "lucide-react";
-import { useEffect, useState } from "react";
+import { MessageCircle } from "lucide-react";
+import { useState } from "react";
 import { useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Input } from "../components/Input";
 import axios from 'axios';
 

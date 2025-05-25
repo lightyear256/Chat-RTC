@@ -12,7 +12,7 @@ export function AppInitializer() {
     const hash = localStorage.getItem("hash");
 
     if (token && hash) {
-      const socket = getSocket(token, hash);
+      const socket = getSocket();
       setSocket(socket);
     }
   }, []);

@@ -10,8 +10,6 @@ export function useUnifiedSocket() {
 
   useEffect(() => {
     if (!socket) {
-      const token = localStorage.getItem("token") || "";
-      const roomId = localStorage.getItem("hash") || "";
       const newSocket = getSocket();
       setSocket(newSocket);
     }

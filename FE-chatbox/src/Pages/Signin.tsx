@@ -1,7 +1,7 @@
 import { MessageCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRef } from "react";
-import { Link, replace, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { Input } from "../components/Input";
 import { useLoader } from "../hooks/useLoader";
 import { ClipLoader } from "react-spinners";
