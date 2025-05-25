@@ -3,63 +3,32 @@ import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { Link, replace, useNavigate } from "react-router-dom";
 import { Input } from "../components/Input";
-import { getSocket } from "../utils/socket";
 import { useLoader } from "../hooks/useLoader";
 import { ClipLoader } from "react-spinners";
-import { useRecoilState } from "recoil";
-import { SocketAtom } from "../stores/atoms/socketAtom";
+import axios from "axios";
 
 export function Signin() {
-  // useEffect(() => {
-  //   getSocket();
-  // }, []);
+  
   const id = "submit";
   const { loading, runWithLoad } = useLoader(id); // Using object destructuring
-  const [show, setShow] = useState(false);
   const [msg, setMsg] = useState("");
-  const [socket,setSocket]=useRecoilState(SocketAtom);
 
   //   const [joined, setJoined] = useState(false);
   const inpref1 = useRef<HTMLInputElement>(null);
   const inpref2 = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  function SubmitHandler() {
-    setMsg("");
-    const msgs = {
-      type: "signin",
-      payload: {
-        email: inpref1.current?.value,
-        password: inpref2.current?.value,
-      },
-    };
-   if(!socket){
-    setSocket(getSocket());
-    return;
-   }
-    socket.send(JSON.stringify(msgs));
+  async function SubmitHandler() {
 
-    socket.onmessage = (event: MessageEvent) => {
-      const data: {
-        type: string;
-        payload: { success: boolean; token?: string; msg: string };
-      } = JSON.parse(event.data);
-      if (data.type === "signin-response" && !data.payload.success) {
-        setTimeout(() => {
-          setMsg(data.payload.msg);
-          navigate("/signin");
-        }, 1000);
-        console.log(msg);
-      } else {
-        if (data.payload.token) {
-          localStorage.setItem("token", data.payload.token);
-          console.log(localStorage.getItem("token"));
-        }
-        setTimeout(() => {
-          setMsg(data.payload.msg);
-          window.location.replace("/dashboard");
-        }, 1000);
+      const response=await axios.post(`${import.meta.env.VITE_API_URL}/user/signin`,{
+        email:inpref1.current?.value,
+        password:inpref2.current?.value
+      })
+      if(response.data.success){
+        localStorage.setItem("token",response.data.token)
+        window.location.replace("/dashboard")
       }
-    };
+      setMsg(response.data.msg)
+
   }
   return (
     <div className="bg-black h-screen w-screen flex justify-center items-center">
@@ -81,16 +50,11 @@ export function Signin() {
             loading ? "opacity-50" : "cursor-pointer"
           }`}
           onClick={() => {
+            console.log("clicked");
             if (!loading) {
-              runWithLoad(
-                () =>
-                  new Promise<void>((resolve) => {
-                    setTimeout(() => {
-                      SubmitHandler();
-                      resolve();
-                    }, 5000);
-                  })
-              );
+              runWithLoad(() => {
+                SubmitHandler();
+              });
             }
           }}
           id={id}

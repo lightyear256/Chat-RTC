@@ -8,17 +8,12 @@ import { useEffect } from 'react';
 import { getSocket } from './utils/socket';
 import { useSetRecoilState } from 'recoil';
 import { SocketAtom } from './stores/atoms/socketAtom';
+import { AppInitializer } from './Pages/Appinitializer';
 
 function App() {
- 
-  const setSocket = useSetRecoilState(SocketAtom);
-
-  useEffect(() => {
-    const sock = getSocket();
-    setSocket(sock);
-  }, [setSocket]);
 
   return (
+    <><AppInitializer />
     <BrowserRouter>
     <Routes>
 
@@ -29,6 +24,7 @@ function App() {
       <Route path='/joined' element={<JoinedChat/>}></Route>
     </Routes>
     </BrowserRouter>
+    </>
     
   )
 }

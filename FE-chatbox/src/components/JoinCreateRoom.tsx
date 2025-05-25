@@ -2,23 +2,58 @@ import { MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { useRef } from "react";
 import { haser } from "../utils/hasher";
-import { getSocket } from "../utils/socket";
 import { useRecoilState } from "recoil";
 import { HashAtom } from "../stores/atoms/hashAtom";
 import { Link, useNavigate } from "react-router-dom";
-import { SocketAtom } from "../stores/atoms/socketAtom";
+import axios from "axios";
 
 export function JoinCreateRoom() {
-  const [socket,setSocket]=useRecoilState(SocketAtom);
   const [show, setShow] = useState(false);
   const [msg, setMsg] = useState("");
 
   const [hash, setHash] = useRecoilState(HashAtom);
   const inpref = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  async function Handler(){
+  const haha=haser();
+  setHash(haha);
+  const response = await axios.post(`${import.meta.env.VITE_API_URL}/room/create`, 
+    {
+      roomId:haha
+    }, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token")
+      },
+    });
+    setMsg(response.data.msg)
+    if(response.data.success){
+      setShow(true);
+    }
+  }
+  async function handler(){
+    localStorage.setItem("hash", inpref.current?.value || "")
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/room/join`,
+      {
+        roomId: inpref.current?.value
+      },
+      {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("token")
+          }
+        }
+      );
+      setMsg(response.data.msg);
+      if(response.data.success){
+        navigate("/joined")
+      }
+  }
   return (
-    <div className="bg-black h-screen w-screen flex justify-center items-center">
-      <div className="border-box border-2 border-gray-800 p-6 flex flex-col gap-y-4 rounded-md w-full max-w-md mx-auto font-mono text-white">
+      <div className="bg-black h-screen w-screen flex justify-center items-center">
+      {localStorage.getItem("token") ?<div className="border-box border-2 border-gray-800 p-6 flex flex-col gap-y-4 rounded-md w-full max-w-md mx-auto font-mono text-white">
+        <div className="bg-white text-black p-4 self-end rounded-md cursor-pointer" onClick={()=>{
+          localStorage.removeItem("token")
+          window.location.replace("/signin")
+          }}>Logout</div>
         <div className="flex gap-x-2 items-center">
           <MessageCircle className="text-white" />
           <div className="text-white text-2xl font-semibold">
@@ -30,38 +65,7 @@ export function JoinCreateRoom() {
         </div>
         <div
           className="bg-white rounded-md text-center p-3 cursor-pointer font-bold w-full text-black  "
-          onClick={async () => {
-            const hashs = haser();
-
-            if (!show) {
-              setHash(hashs);
-            }
-            setShow(true);
-            if(!socket){
-              setSocket(getSocket());
-            }
-            if (socket) {
-              socket.send(
-                JSON.stringify({
-                  type: "create-room",
-                  payload: {
-                    roomId: hashs,
-                  },
-                })
-              );
-              socket.onmessage = (event: MessageEvent) => {
-                const data: {
-                  type: string;
-                  payload: { success: boolean; token?: string; msg: string };
-                } = JSON.parse(event.data);
-                if (data.type === "signin-response" && !data.payload.success) {
-                  setMsg("Failed to create room");
-                } else {
-                  setMsg("Room created successfully");
-                }
-              };
-            }
-          }}
+          onClick={Handler}
         >
           Create New Room
         </div>
@@ -74,35 +78,9 @@ export function JoinCreateRoom() {
           />
           <div
             className="bg-white text-black p-3 rounded-r-md cursor-pointer font-bold"
-            onClick={() => {
-              if(!socket){
-                setSocket(getSocket());
-              }
-              if (socket) {
-                socket.send(
-                  JSON.stringify({
-                    type: "join",
-                    payload: {
-                      token: localStorage.getItem("token"),
-                      roomId: inpref.current?.value,
-                    },
-                  })
-                );
-                localStorage.setItem("hash", inpref.current?.value as string);
-
-                socket.onmessage = (event: MessageEvent) => {
-                  const data: {
-                    type: string;
-                    payload: { success: boolean; msg: string };
-                  } = JSON.parse(event.data);
-                  console.log(data);
-                  if (data.type === "join-response" && !data.payload.success) {
-                    setMsg("incorrect code");
-                  } else {
-                    setMsg("Joining...");
-                    navigate("/joined", { replace: true });
-                  }
-                };
+            onClick={()=>{
+              if(inpref.current?.value!=""){
+                handler()
               }
             }}
           >
@@ -118,7 +96,7 @@ export function JoinCreateRoom() {
           </div>
         )}
         <div className="text-white text-sm">{msg}</div>
-      </div>
+      </div>:<div className="text-white">Error 404 NOT FOUND</div>}
     </div>
   );
 }

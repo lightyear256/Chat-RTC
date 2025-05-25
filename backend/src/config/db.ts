@@ -5,10 +5,11 @@ dotenv.config({
     path: path.resolve(__dirname, '../../.env'),
 })
 export const Connection=async()=>{
+    console.log(process.env.MONGOOSE_URI as string);
     try{
         await mongoose.connect(process.env.MONGOOSE_URI as string);
         console.log("connected "+process.env.MONGOOSE_URI as string);
     }catch(e){
-        console.log("Not Connected Successfully");
+        console.log("Not Connected Successfully "+e);
     }
 }

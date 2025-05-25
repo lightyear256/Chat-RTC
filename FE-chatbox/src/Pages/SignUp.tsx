@@ -3,48 +3,27 @@ import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "../components/Input";
-import { getSocket } from "../utils/socket";
-import { useRecoilState } from "recoil";
-import { SocketAtom } from "../stores/atoms/socketAtom";
+import axios from 'axios';
+
 
 export function SignUp() {
   const [msg, setMsg] = useState("");
-  const [socket,setSocket]=useRecoilState(SocketAtom);
 
   
   const inpref1 = useRef<HTMLInputElement>(null);
   const inpref2 = useRef<HTMLInputElement>(null);
   const inpref3 = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  function SubmitHandler() {
-    const msgs = {
-      type: "register",
-      payload: {
-        email: inpref1.current?.value,
-        password: inpref2.current?.value,
-        name: inpref3.current?.value,
-      },
-    };
-    if(!socket){
-      setSocket(getSocket())
-      return;
+  async function SubmitHandler() {
+    const response= await axios.post(`${import.meta.env.VITE_API_URL}/user/signup`,{
+      email:inpref1.current?.value,
+      password:inpref2.current?.value,
+      name:inpref3.current?.value
+    })
+    if(response.data.success){
+      navigate("/signin")
     }
-    socket.send(JSON.stringify(msgs));
-    socket.onmessage = (event: MessageEvent) => {
-      const data: {
-        type: string;
-        payload: { success: boolean; msg: "string" };
-      } = JSON.parse(event.data);
-      if (data.type === "signup-response" && !data.payload.success) {
-        setMsg(data.payload.msg);
-        navigate("/signup");
-      } else {
-        setTimeout(() => {
-          setMsg(data.payload.msg);
-          navigate("/Signin");
-        }, 1000);
-      }
-    };
+    setMsg(response.data.msg);
   }
   return (
     <div className="bg-black h-screen w-screen flex justify-center items-center">

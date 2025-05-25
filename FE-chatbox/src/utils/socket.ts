@@ -1,55 +1,23 @@
-let socket: WebSocket | null = null;
-const listeners = new Map<string, ((data: any) => void)[]>();
+let socketInstance: WebSocket | null = null;
 
 export function getSocket(): WebSocket {
-  if (!socket || socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING || socket.readyState === WebSocket.CONNECTING) {
-    console.log("Creating new WebSocket connection...");
-    socket = new WebSocket("ws://localhost:8080");
-
-    socket.onopen = () => {
-      const token = localStorage.getItem("token");
-      const roomId = localStorage.getItem("hash");
-      if (token && roomId) {
-        socket?.send(JSON.stringify({
-          type: "reconnect",
-          payload: { token, roomId }
-        }));
-      }
-      console.log("WebSocket connected");
+  if (!socketInstance || socketInstance.readyState === WebSocket.CLOSED) {
+    socketInstance = new WebSocket(`ws://localhost:5000`);
+    
+    // Optionally, you can add socket open/close/error handlers here
+    socketInstance.onopen = () => {
+      console.log("Socket connected");
+      // You can send an initial auth or room join message here if needed
     };
-
-    socket.onmessage = (e) => {
-      const { type, payload } = JSON.parse(e.data);
-      if (listeners.has(type)) {
-        listeners.get(type)!.forEach(cb => cb(payload));
-      }
+    
+    socketInstance.onclose = () => {
+      console.log("Socket closed");
+      // Clean up or try reconnect logic here if needed
     };
-
-    socket.onclose = () => {
-      console.log("WebSocket closed. Reconnecting...");
-      setTimeout(() => {
-        socket = null;
-        getSocket(); // triggers reconnection
-      }, 2000);
-    };
-
-    socket.onerror = (err) => {
-      console.error("WebSocket error", err);
-      socket = null;
+    
+    socketInstance.onerror = (err) => {
+      console.error("Socket error", err);
     };
   }
-
-  return socket;
-}
-
-export function addListener(type: string, cb: (payload: any) => void) {
-  if (!listeners.has(type)) listeners.set(type, []);
-  listeners.get(type)!.push(cb);
-}
-
-export function removeListener(type: string, cb: (payload: any) => void) {
-  if (listeners.has(type)) {
-    const arr = listeners.get(type)!;
-    listeners.set(type, arr.filter(fn => fn !== cb));
-  }
+  return socketInstance;
 }
