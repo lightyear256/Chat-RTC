@@ -5,14 +5,15 @@ import { WebSocketServer, WebSocket } from 'ws';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import path from 'path';
-import { MessagesModel, RoomsModel } from './models/model'; // fix this path as needed
+import { MessagesModel, RoomsModel } from './models/model';
 
 dotenv.config({
   path: path.resolve(__dirname, '../.env'),
 });
 
-const server = http.createServer(app); // create raw server from Express app
-const wss = new WebSocketServer({ server }); // bind WebSocket to same server
+const server = http.createServer(app); 
+console.log(server);
+const wss = new WebSocketServer({ server }); 
 
 interface JWT_Payload {
   userId: string;
@@ -37,8 +38,8 @@ wss.on('connection', function (socket) {
           parseData.payload.token,
           process.env.JWT_SECRET_USER as string
         ) as JWT_Payload;
-        console.log("user  bjbj "+JSON.stringify(user));
-        console.log(JSON.stringify(parseData.payload));
+        // console.log("user  bjbj "+JSON.stringify(user));
+        // console.log(JSON.stringify(parseData.payload));
         const room = await RoomsModel.findOne({
           hash: parseData.payload.roomId,
         }) as RoomDocument;
@@ -60,7 +61,7 @@ wss.on('connection', function (socket) {
           message: parseData.payload.message,
           roomId,
         });
-        console.log(" nwlfnekjg"+ user.name);
+        // console.log(" nwlfnekjg"+ user.name);
         const clients = roomSockets.get(roomId);
         clients?.forEach((clientSocket, uid) => {
           if (clientSocket.readyState === socket.OPEN) {
@@ -78,7 +79,7 @@ wss.on('connection', function (socket) {
         });
       }
     } catch (err) {
-      console.error('❌ Message processing failed:', err);
+      console.error('Message processing failed:', err);
       socket.send(
         JSON.stringify({
           type: 'error',
@@ -106,7 +107,7 @@ wss.on('connection', function (socket) {
 const startServer = async () => {
   await Connection();
   server.listen(5000, () => {
-    console.log('✅ Express + WebSocket server running on http://localhost:5000');
+    console.log(`Express + WebSocket server running on ${process.env.port}`);
   });
 };
 

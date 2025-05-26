@@ -2,7 +2,7 @@ let socketInstance: WebSocket | null = null;
 
 export function getSocket(): WebSocket {
   if (!socketInstance || socketInstance.readyState === WebSocket.CLOSED) {
-    socketInstance = new WebSocket(`ws://localhost:5000`);
+    socketInstance = new WebSocket(`ws://${import.meta.env.VITE_WEBSOCKET_URL}`);
     
     // Optionally, you can add socket open/close/error handlers here
     socketInstance.onopen = () => {
