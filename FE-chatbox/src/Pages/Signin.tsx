@@ -13,7 +13,6 @@ export function Signin() {
   const { loading, runWithLoad } = useLoader(id); // Using object destructuring
   const [msg, setMsg] = useState("");
 
-  //   const [joined, setJoined] = useState(false);
   const inpref1 = useRef<HTMLInputElement>(null);
   const inpref2 = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();

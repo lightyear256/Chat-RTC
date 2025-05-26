@@ -2,17 +2,14 @@ let socketInstance: WebSocket | null = null;
 
 export function getSocket(): WebSocket {
   if (!socketInstance || socketInstance.readyState === WebSocket.CLOSED) {
-    socketInstance = new WebSocket(`ws://${import.meta.env.VITE_WEBSOCKET_URL}`);
+    socketInstance = new WebSocket(`wss://${import.meta.env.VITE_WEBSOCKET_URL}`);
     
-    // Optionally, you can add socket open/close/error handlers here
     socketInstance.onopen = () => {
       console.log("Socket connected");
-      // You can send an initial auth or room join message here if needed
     };
     
     socketInstance.onclose = () => {
       console.log("Socket closed");
-      // Clean up or try reconnect logic here if needed
     };
     
     socketInstance.onerror = (err) => {

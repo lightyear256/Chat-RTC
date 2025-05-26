@@ -1,4 +1,3 @@
-// components/AppInitializer.tsx
 import { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
 import { SocketAtom } from "../stores/atoms/socketAtom";
