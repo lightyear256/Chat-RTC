@@ -4,26 +4,48 @@ import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "../components/Input";
 import axios from 'axios';
+import { useLoader } from "../hooks/useLoader";
 
 
 export function SignUp() {
-  const [msg, setMsg] = useState("");
-
-  
+ const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
+  const [msg, setMsg] = useState(null);
+  const { loading, runWithLoad } = useLoader('submit')
   const inpref1 = useRef<HTMLInputElement>(null);
   const inpref2 = useRef<HTMLInputElement>(null);
   const inpref3 = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   async function SubmitHandler() {
-    const response= await axios.post(`${import.meta.env.VITE_API_URL}/user/signup`,{
-      email:inpref1.current?.value,
-      password:inpref2.current?.value,
-      name:inpref3.current?.value
-    })
-    if(response.data.success){
-      navigate("/signin")
+    const email = inpref1.current?.value;
+    const password = inpref2.current?.value;
+    const name = inpref3.current?.value;
+    console.log("Submitting:", { email, password, name });
+    try {
+      setErrors({});
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/user/signup`,
+        {
+          email: email,
+          password: password,
+          name: name,
+        }
+      );
+      setMsg(response.data.msg);
+      setTimeout(()=>{
+          setMsg(null)
+          navigate("/signin")
+      },500)
+    } catch (error: any) {
+      const data = error.response?.data;
+      if (data.msg.fieldErrors) {
+        console.log(data.msg.fieldErrors);
+        setErrors(data.msg.fieldErrors);
+      } else if (typeof data?.msg === "string") {
+        setErrors({ general: [data.msg] });
+      } else {
+        alert("Something went wrong");
+      }
     }
-    setMsg(response.data.msg);
   }
   return (
     <div className="bg-black h-screen w-screen flex justify-center items-center">
@@ -37,13 +59,23 @@ export function SignUp() {
         <div className="text-2xl font-bold text-center">Sign Up</div>
         <div className="flex flex-col gap-y-2">
           <Input placeholder="Email" type="text" refer={inpref1} />
+          {errors.email && <p className="text-red-500">{errors.email[0]}</p>}
           <Input placeholder="Password" type="Password" refer={inpref2} />
+          {errors.password && <p className="text-red-500">{errors.password[0]}</p>}
           <Input placeholder="Name" type="text" refer={inpref3} />
+          {errors.name && <p className="text-red-500">{errors.name[0]}</p>}
         </div>
-        <div className="text-white text-sm">{msg}</div>
+        {errors.general && <p className="text-red-500">{errors.general[0]}</p>}
+        {msg && <p className="text-green-400">{msg}</p>}
         <div
           className="bg-white p-3 rounded-md text-black flex items-center justify-center font-bold text-xl cursor-pointer"
-          onClick={SubmitHandler}
+          onClick={() => {
+            if (!loading) {
+              console.log("clicked");
+              runWithLoad(async() => await SubmitHandler());
+            }
+          }}
+          id={'submit'}
         >
           Submit
         </div>

@@ -1,33 +1,46 @@
 import { MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { useRef } from "react";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Input } from "../components/Input";
 import { useLoader } from "../hooks/useLoader";
 import { ClipLoader } from "react-spinners";
 import axios from "axios";
 
 export function Signin() {
-  
-  const id = "submit";
-  const { loading, runWithLoad } = useLoader(id); // Using object destructuring
+  const { loading, runWithLoad } = useLoader("submit"); // Using object destructuring
   const [msg, setMsg] = useState("");
-
+  const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const inpref1 = useRef<HTMLInputElement>(null);
   const inpref2 = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   async function SubmitHandler() {
+    try {
+      setErrors({});
 
-      const response=await axios.post(`${import.meta.env.VITE_API_URL}/user/signin`,{
-        email:inpref1.current?.value,
-        password:inpref2.current?.value
-      })
-      if(response.data.success){
-        localStorage.setItem("token",response.data.token)
-        window.location.replace("/dashboard")
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/user/signin`,
+        {
+          email: inpref1.current?.value,
+          password: inpref2.current?.value,
+        }
+      );
+      setMsg(response.data.msg);
+        localStorage.setItem("token", response.data.token);
+        setTimeout(() => {
+          window.location.replace("/dashboard");
+        }, 2000);
+      
+    } catch (error: any) {
+      const data = error.response?.data;
+      if (data?.msg?.fieldErrors) {
+        setErrors(data.msg.fieldErrors);
+      } else if (typeof data?.msg === "string") {
+        setErrors({ general: [data.msg] });
+        console.log(errors);
+      } else {
       }
-      setMsg(response.data.msg)
-
+    }
   }
   return (
     <div className="bg-black h-screen w-screen flex justify-center items-center">
@@ -41,22 +54,26 @@ export function Signin() {
         <div className="text-2xl font-bold text-center">Sign In</div>
         <div className="flex flex-col gap-y-2">
           <Input placeholder="Email" type="text" refer={inpref1} />
+          {errors.email && <p className="text-red-500">{errors.email[0]}</p>}
           <Input placeholder="Password" type="Password" refer={inpref2} />
+          {errors.password && (
+            <p className="text-red-500">{errors.password[0]}</p>
+          )}
         </div>
-        <div className="text-white texl-sm">{msg}</div>
+        {msg && <p className="text-green-400">{msg}</p>}
+        {errors.general && <p className="text-red-400">{errors.general[0]}</p>}
+        {/* <div className="text-white texl-sm">{msg}</div> */}
         <div
-          className={` bg-white p-3 rounded-md text-black flex items-center justify-center font-bold text-xl  ${
-            loading ? "opacity-50" : "cursor-pointer"
+          className={`bg-white p-3 rounded-md text-black flex items-center justify-center font-bold text-xl ${
+            loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           }`}
           onClick={() => {
-            console.log("clicked");
             if (!loading) {
-              runWithLoad(() => {
-                SubmitHandler();
-              });
+              console.log("clicked");
+              runWithLoad(async () => await SubmitHandler());
             }
           }}
-          id={id}
+          id={"submit"}
         >
           {loading ? (
             <ClipLoader

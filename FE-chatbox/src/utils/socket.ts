@@ -2,7 +2,7 @@ let socketInstance: WebSocket | null = null;
 
 export function getSocket(): WebSocket {
   if (!socketInstance || socketInstance.readyState === WebSocket.CLOSED) {
-    socketInstance = new WebSocket(`wss://${import.meta.env.VITE_WEBSOCKET_URL}`);
+    socketInstance = new WebSocket(`ws://${import.meta.env.VITE_WEBSOCKET_URL}`);
     
     socketInstance.onopen = () => {
       console.log("Socket connected");
