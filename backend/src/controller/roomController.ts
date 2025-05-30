@@ -53,13 +53,11 @@ export const fetch=async(req:AuthenticatorRequest,res:Response)=>{
                 }
                 fetchMessages.push(data);
             }
-
             res.send({
                 success:true,
                 msg:"chat-fetched",
                 messages:fetchMessages,
                 name:req.user?.name
-
             })
 
         } catch (error) {
