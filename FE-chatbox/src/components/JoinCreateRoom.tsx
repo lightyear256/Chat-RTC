@@ -6,7 +6,6 @@ import { useRecoilState } from "recoil";
 import { HashAtom } from "../stores/atoms/hashAtom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { LoadingAtom } from "../stores/atoms/LoadingAtom";
 import { useLoader } from "../hooks/useLoader";
 
 export function JoinCreateRoom() {
