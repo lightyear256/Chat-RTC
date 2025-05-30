@@ -73,9 +73,11 @@ wss.on("connection", function (socket) {
           });
           console.log(room.users.length===0);
           if(room.users.length===0){
+            await MessagesModel.deleteMany({roomId:room._id})
             await RoomsModel.deleteOne({
               hash:hash
             })
+
           }
         }
         
