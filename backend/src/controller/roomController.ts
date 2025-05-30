@@ -57,7 +57,7 @@ export const fetch=async(req:AuthenticatorRequest,res:Response)=>{
                 success:true,
                 msg:"chat-fetched",
                 messages:fetchMessages,
-                name:req.user?.name
+                name:req.user?.name                
             })
 
         } catch (error) {
