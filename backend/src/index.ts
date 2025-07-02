@@ -12,4 +12,8 @@ app.use(cors({
 
 app.use('/user',userRouter)
 app.use("/room",roomRouter)
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
 
