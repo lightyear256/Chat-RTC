@@ -1,5 +1,5 @@
 import { MessageCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "../components/Input";
@@ -15,6 +15,11 @@ export function SignUp() {
   const inpref2 = useRef<HTMLInputElement>(null);
   const inpref3 = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  useEffect(()=>{
+      if(localStorage.getItem("token")){
+       window.location.replace("/dashboard");
+      }
+    },[])
   async function SubmitHandler() {
     const email = inpref1.current?.value;
     const password = inpref2.current?.value;
