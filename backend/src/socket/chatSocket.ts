@@ -78,7 +78,7 @@ wss.on("connection", function (socket) {
         });
       }
     } catch (err) {
-      console.error("❌ Message processing failed:", err);
+      console.error("Message processing failed:", err);
       socket.send(
         JSON.stringify({
           type: "error",

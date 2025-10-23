@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "../components/Input";
 import axios from 'axios';
 import { useLoader } from "../hooks/useLoader";
+import { ClipLoader } from 'react-spinners';
 
 
 export function SignUp() {
@@ -73,16 +74,27 @@ export function SignUp() {
         {errors.general && <p className="text-red-500">{errors.general[0]}</p>}
         {msg && <p className="text-green-400">{msg}</p>}
         <div
-          className="bg-white p-3 rounded-md text-black flex items-center justify-center font-bold text-xl cursor-pointer"
+          className={`bg-white p-3 rounded-md text-black flex items-center justify-center font-bold text-xl ${
+            loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+          }`}
           onClick={() => {
             if (!loading) {
               console.log("clicked");
-              runWithLoad(async() => await SubmitHandler());
+              runWithLoad(async () => await SubmitHandler());
             }
           }}
-          id={'submit'}
+          id={"submit"}
         >
-          Submit
+          {loading ? (
+            <ClipLoader
+              color="#000000"
+              loading={loading}
+              size={25}
+              className="mx-auto"
+            />
+          ) : (
+            "Submit"
+          )}
         </div>
         <div className="text-sm text-white">
           Already Signedup{" "}

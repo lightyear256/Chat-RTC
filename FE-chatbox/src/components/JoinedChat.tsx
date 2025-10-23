@@ -175,7 +175,13 @@ export function JoinedChat() {
             <div>Room Code: {localStorage.getItem("hash")}</div>
             <div>Users:{connected}</div>
           </div>
-          <div className="h-75 border-2 border-gray-800 overflow-auto flex flex-col p-4 border-box gap-y-7">
+          <div className="h-75 border-2  border-gray-800 overflow-auto flex flex-col p-4 border-box gap-y-7 [&::-webkit-scrollbar]:w-1.5 
+  [&::-webkit-scrollbar-track]:bg-transparent 
+  [&::-webkit-scrollbar-thumb]:bg-gray-300 
+  [&::-webkit-scrollbar-thumb]:rounded-sm
+  [&::-webkit-scrollbar-thumb:hover]:bg-gray-400
+  dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 
+  dark:[&::-webkit-scrollbar-thumb:hover]:bg-gray-500">
             {message.map((m, i) => {
               const uniqueKey = `${m.from}-${m.messages}-${i}`;
               return m.type === "receiver" ? (
